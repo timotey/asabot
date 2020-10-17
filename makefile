@@ -1,9 +1,9 @@
 CC=clang++
 LD=clang++
 
-CFLAGS=O0 g3 Wall std=c++2a DBOOST_ASIO_DISABLE_CONCEPTS
-LFLAGS=
-LIBS=TgBot boost_system ssl crypto pthread
+CFLAGS=O0 g3 Wall stdlib=libc++ std=c++2a fcoroutines-ts DBOOST_ASIO_DISABLE_CONCEPTS
+LFLAGS= stdlib=libc++
+LIBS=boost_system boost_thread ssl crypto pthread
 PATH_INCS=
 PATH_LIBS=
 PATH_DLIB=
