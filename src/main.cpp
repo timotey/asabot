@@ -15,16 +15,16 @@ struct mock_request
 	{
 		std::string payload;
 		friend std::istream&
-		operator>>(std::istream& s, response_type t)
+		operator>>(std::istream& s, response_type& t)
 		{
 			t.payload = std::string {std::istreambuf_iterator<char>(s), {}};
 			return s;
 		}
 	};
-	static constexpr std::string_view name = "getMe";
+	static constexpr std::string_view name = "getUpdates";
 	std::string						  payload;
 	friend std::ostream&
-	operator<<(std::ostream& s, mock_request t)
+	operator<<(std::ostream& s, const mock_request& t)
 	{
 		return s << t.payload;
 	}
@@ -40,17 +40,19 @@ main(int argc, char* argv[])
 		return key;
 	}("key")};
 
-	mock_request r;
+	mock_request r{.payload = "{}"};
 
-	auto ret_future =
-		asabot::perform_request<asabot::tg::longpoll_bot, mock_request>(bot, r);
+	auto ret_future = asabot::perform_request(bot, r);
 	asabot::start(bot, 2);
 	try
 	{
-		std::cout << ret_future.get().payload << '\n';
+		auto r = ret_future.get();
+		std::cout << "\r\n" << r.payload << "\n\r\n\r";
 	}
-	catch(...)
-	{}
+	catch(const boost::system::system_error& e)
+	{
+		std::cout << e.code().message() << "\n" << e.what() << "\n";
+	}
 	std::cin.ignore();
 	asabot::stop(bot);
 	asabot::join(bot);

@@ -56,42 +56,34 @@ class longpoll_bot
 		try
 		{
 			/* connect to the host */
-			std::cout << "started: " << "connecting\n";
 			ssl_socket sock {bot.io_context, bot.ssl_context};
 			co_await asio::async_connect(
 				sock.lowest_layer(),
 				bot.resolver.resolve(bot.query),
 				asio::use_awaitable);
-			std::cout << "ended: " << "connecting\n";
 
-			/* perform ssl handshake */
-			std::cout << "started: " << "handshaking\n";
+			/* perform tls handshake */
 			sock.lowest_layer().set_option(asio::ip::tcp::no_delay(true));
 			sock.set_verify_mode(ssl::verify_peer);
 			sock.set_verify_callback(
-				ssl::host_name_verification("api.telegram.com"));
+				ssl::host_name_verification("api.telegram.org"));
 			co_await sock.async_handshake(
 				ssl_socket::client,
 				asio::use_awaitable);
-			std::cout << "ended: " << "handshaking\n";
 
 			/* construct the HTTP request */
-			std::cout << "started: " << "constructing\n";
 			asio::streambuf request_buf;
 			std::ostream	request_stream(&request_buf);
-			request_stream << "GET /" << bot.token << "/" << request_type::name
-						   << " HTTP/1.0\r\n";
+			request_stream << "GET /bot" << bot.token << "/" << request_type::name
+						   << " HTTP/1.1\r\n";
+			request_stream << "Host: api.telegram.org\r\n";
 			request_stream << "Connection: close\r\n\r\n";
 			request_stream << request;
-			std::cout << "ended: " << "constructing\n";
 
 			/* send the HTTP request */
-			std::cout << "started: " << "sending\n";
 			co_await asio::async_write(sock, request_buf, asio::use_awaitable);
-			std::cout << "ended: " << "sending\n";
 
 			/* recieve the HTTP request */
-			std::cout << "started: " << "recieving\n";
 			// this could be co_await asio::async_read, but it cannot
 			// accept asio::use_awaitable as a completion handler,
 			// so you need to use asio::async_read_until with
@@ -115,19 +107,22 @@ class longpoll_bot
 			}
 			catch (const boost::system::system_error& e)
 			{
+				if (e.code() == ssl::error::stream_errors::stream_truncated)
+				{
+					std::cout << e.what();
+				}
+				else
 				if (e.code() != asio::error::eof)
-					throw e; // rethrow if it's really an exception
+					throw; // rethrow if it's really an exception
 			}
-			std::cout << "ended: " << "recieving\n";
 			/* end of recieve the HTTP request */
 
 			/* deserealization of the HTTP request */
-			std::cout << "started: " << "deserializing\n";
 			// TODO: implement deserialization part
 			response_type response;
 			response_stream >> response;
-			std::cout << "ended: " << "deserializing\n";
 			result.set_value(response);
+			sock.shutdown();
 			co_return;
 		}
 		catch (...)
