@@ -31,7 +31,7 @@ struct mock_request
 };
 
 int
-main(int argc, char* argv[])
+main(int, char*[])
 {
 	asabot::tg::longpoll_bot bot {[](std::string_view file) {
 		std::ifstream keyfile {file};
@@ -40,16 +40,28 @@ main(int argc, char* argv[])
 		return key;
 	}("key")};
 
-	mock_request r{.payload = "{}"};
+	mock_request r {.payload = "{\"timeout\" : 100}"};
 
-	auto ret_future = asabot::perform_request(bot, r);
+	std::cin.ignore();
 	asabot::start(bot, 2);
+	auto ret_future = asabot::perform_request(bot, r);
 	try
 	{
 		auto r = ret_future.get();
 		std::cout << "\r\n" << r.payload << "\n\r\n\r";
 	}
-	catch(const boost::system::system_error& e)
+	catch (const boost::system::system_error& e)
+	{
+		std::cout << e.code().message() << "\n" << e.what() << "\n";
+	}
+	std::this_thread::sleep_for(std::chrono::seconds(1));
+	auto ret_future2 = asabot::perform_request(bot, r);
+	try
+	{
+		auto r = ret_future2.get();
+		std::cout << "\r\n" << r.payload << "\n\r\n\r";
+	}
+	catch (const boost::system::system_error& e)
 	{
 		std::cout << e.code().message() << "\n" << e.what() << "\n";
 	}

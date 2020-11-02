@@ -1,10 +1,13 @@
 #include <string_view>
 #include <future>
 #include <thread>
+#include <sstream>
 #include <exception>
+#include <regex>
 #include <experimental/coroutine>
 #include <boost/asio.hpp>
 #include <boost/asio/ssl.hpp>
+#include <boost/beast.hpp>
 #include "core.hpp"
 
 namespace asabot
@@ -12,6 +15,7 @@ namespace asabot
 namespace tg
 {
 namespace asio = boost::asio;
+namespace http = boost::beast::http;
 
 ///
 ///@brief the main bot class which handles the communication to telegram
@@ -21,23 +25,47 @@ namespace asio = boost::asio;
 ///
 class longpoll_bot
 {
+	struct request_context
+	{
+		asio::ssl::stream<asio::ip::tcp::socket> sock;
+		// asio::ssl::context						 ctx;
+	};
+
+	struct common_settings
+	{
+		asio::ip::tcp::resolver::query query;
+	};
+
 	public:
-	const std::string			   token;
+	std::string const			   token;
 	asio::io_context			   io_context;
 	asio::ssl::context			   ssl_context;
 	asio::ip::tcp::resolver		   resolver;
-	asio::ip::tcp::resolver::query query;
 	std::vector<std::thread>	   threads;
+	resource_repo<request_context> socks;
+	asio::executor_work_guard<asio::io_context::executor_type> work;
 
+	static common_settings const&
+	get_common_settings()
+	{
+		static common_settings const s {
+			{"api.telegram.org", "https"}};
+		return s;
+	}
+
+	public:
 	template <class bot_type>
 	friend void
 	asabot::start(bot_type&, std::size_t);
+
 	template <class bot_type>
 	friend void
 	asabot::stop(bot_type&);
+
 	template <class bot_type>
 	friend void
 	asabot::join(bot_type&);
+
 	template <class bot_type, class request_type>
 	friend std::future<typename request_type::response_type>
 	perform_request(bot_type& bot, request_type&& request);
@@ -50,79 +78,81 @@ class longpoll_bot
 		std::promise<typename request_type::response_type> result)
 	{
 		namespace ssl		= asio::ssl;
-		using ssl_socket	= ssl::stream<asio::ip::tcp::socket>;
 		using response_type = typename request_type::response_type;
 
 		try
 		{
 			/* connect to the host */
-			ssl_socket sock {bot.io_context, bot.ssl_context};
-			co_await asio::async_connect(
-				sock.lowest_layer(),
-				bot.resolver.resolve(bot.query),
-				asio::use_awaitable);
-
-			/* perform tls handshake */
-			sock.lowest_layer().set_option(asio::ip::tcp::no_delay(true));
-			sock.set_verify_mode(ssl::verify_peer);
-			sock.set_verify_callback(
-				ssl::host_name_verification("api.telegram.org"));
-			co_await sock.async_handshake(
-				ssl_socket::client,
-				asio::use_awaitable);
+			auto sock = bot.socks.lock();
 
 			/* construct the HTTP request */
-			asio::streambuf request_buf;
-			std::ostream	request_stream(&request_buf);
-			request_stream << "GET /bot" << bot.token << "/" << request_type::name
-						   << " HTTP/1.1\r\n";
-			request_stream << "Host: api.telegram.org\r\n";
-			request_stream << "Connection: close\r\n\r\n";
-			request_stream << request;
+			// asio::streambuf	  request_buf;
+			std::stringstream body_stream;
+			body_stream << request;
+
+			http::request<http::string_body> request;
+			request.method(http::verb::get);
+			request.keep_alive(true);
+			{
+				using namespace std::string_literals;
+				request.target(
+					"/bot"s + bot.token + "/"s
+					+ static_cast<std::string>(request_type::name));
+			}
+			request.set(
+				http::field::host,
+				longpoll_bot::get_common_settings().query.host_name());
+			request.set(http::field::content_type, "application/json");
+			request.body() = body_stream.str();
+			//std::cout << request.target();
+			request.prepare_payload();
+
+			// request_stream << "GET /bot" << bot.token << "/"
+			//			   << request_type::name << " HTTP/1.1\r\n";
+			// request_stream << "Host: api.telegram.org\r\n";
+			// request_stream << "Content-Type: application/json\r\n";
+			// request_stream << "Content-Length: " <<
+			// body_stream.str().length()
+			//			   << "\r\n";
+			// request_stream << "Connection: keep-alive\r\n\r\n";
+			// request_stream << body_stream.str();
 
 			/* send the HTTP request */
-			co_await asio::async_write(sock, request_buf, asio::use_awaitable);
+			//std::cout << request.base() << "\r\n\r\n";
+			co_await http::async_write(
+				sock->sock,
+				request,
+				asio::use_awaitable);
 
 			/* recieve the HTTP request */
 			// this could be co_await asio::async_read, but it cannot
 			// accept asio::use_awaitable as a completion handler,
 			// so you need to use asio::async_read_until with
 			// condition which matches stream end
-			using buffer_iterator = boost::asio::buffers_iterator<
-				boost::asio::streambuf::const_buffers_type>;
-			auto match_end =
-				+[](buffer_iterator begin,
-					buffer_iterator end) -> std::pair<buffer_iterator, bool> {
-				return std::make_pair(end, false);
-			};
-			asio::streambuf response_buf;
-			std::istream	response_stream(&response_buf);
-			try
-			{
-				co_await asio::async_read_until(
-					sock,
-					response_buf,
-					match_end,
-					boost::asio::use_awaitable);
-			}
-			catch (const boost::system::system_error& e)
-			{
-				if (e.code() == ssl::error::stream_errors::stream_truncated)
-				{
-					std::cout << e.what();
-				}
-				else
-				if (e.code() != asio::error::eof)
-					throw; // rethrow if it's really an exception
-			}
+			// using buffer_iterator = boost::asio::buffers_iterator<
+			//	boost::asio::streambuf::const_buffers_type>;
+			// auto match_end =
+			//	+[](buffer_iterator,
+			//		buffer_iterator end) -> std::pair<buffer_iterator, bool> {
+			//	return std::make_pair(end, false);
+			//};
+			// asio::streambuf response_header_buf;
+			// std::istream	response_header_stream(&response_header_buf);
+			http::response<http::string_body> http_response;
+			boost::beast::flat_buffer		  buf;
+			co_await http::async_read(
+				sock->sock,
+				buf,
+				http_response,
+				boost::asio::use_awaitable);
 			/* end of recieve the HTTP request */
 
 			/* deserealization of the HTTP request */
 			// TODO: implement deserialization part
-			response_type response;
+			std::istringstream response_stream {http_response.body()};
+			response_type	   response;
 			response_stream >> response;
 			result.set_value(response);
-			sock.shutdown();
 			co_return;
 		}
 		catch (...)
@@ -136,9 +166,34 @@ class longpoll_bot
 	///@brief the constructor
 	///@param[in]	token	telegram bot token used for api authentication
 	///
-	longpoll_bot(std::string_view _token):
+	explicit longpoll_bot(std::string_view _token):
 		token(_token), io_context(), ssl_context(asio::ssl::context::tls),
-		resolver(this->io_context), query("api.telegram.org", "https")
+		resolver(this->io_context), // query("api.telegram.org", "https")
+
+		/* initializing our request context container with a factory function
+		   which will produce ready to use sockets */
+		// TODO: make this function asynchronyous
+		socks([this]() -> request_context {
+			using ssl_socket = asio::ssl::stream<asio::ip::tcp::socket>;
+			longpoll_bot::request_context sock {
+				{this->io_context, this->ssl_context}};
+
+			/* attempting to connect to the server */
+			asio::connect(
+				sock.sock.lowest_layer(),
+				this->resolver.resolve(
+					longpoll_bot::get_common_settings().query));
+
+			/* perform tls handshake */
+			sock.sock.lowest_layer().set_option(asio::ip::tcp::no_delay(true));
+			sock.sock.set_verify_mode(asio::ssl::verify_peer);
+			sock.sock.set_verify_callback(asio::ssl::host_name_verification(
+				longpoll_bot::get_common_settings().query.host_name()));
+			sock.sock.handshake(ssl_socket::client);
+			return sock;
+		}),
+
+		work(this->io_context.get_executor())
 	{
 		this->ssl_context.set_default_verify_paths();
 	}

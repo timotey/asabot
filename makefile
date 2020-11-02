@@ -1,6 +1,8 @@
 CC=clang++
 LD=clang++
 
+WARNS=all extra
+
 CFLAGS=O0 g3 Wall stdlib=libc++ std=c++2a fcoroutines-ts DBOOST_ASIO_DISABLE_CONCEPTS
 LFLAGS= stdlib=libc++
 LIBS=boost_system boost_thread ssl crypto pthread
@@ -18,7 +20,7 @@ SRCS=$(shell find $(PATH_SRC) -name "*.cpp")
 OBJS=$(SRCS:$(PATH_SRC)/%.cpp=$(PATH_OBJ)/%.o)
 DEPS=$(SRCS:$(PATH_SRC)/%.cpp=$(PATH_OBJ)/%.d)
 
-COMPILE_CPP=$(CC) -MMD -c $(patsubst %, -%,$(CFLAGS)) $(patsubst %, -I%,$(PATH_INCS)) 
+COMPILE_CPP=$(CC) -MMD -c $(patsubst %, -%,$(CFLAGS)) $(patsubst %, -I%,$(PATH_INCS)) $(patsubst %, -W%,$(WARNS))
 LINK_CPP=$(LD) -o $@ $^ $(patsubst %,-rpath %,$(PATH_DLIB)) $(patsubst %, -L%, $(PATH_LIBS)) $(patsubst %, -l%, $(LIBS)) $(patsubst %, -%, $(LFLAGS))
 
 all:$(PATH_OBJ)/$(BIN_NAME)

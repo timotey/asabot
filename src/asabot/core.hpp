@@ -1,5 +1,7 @@
 #include <boost/asio.hpp>
 #include <functional>
+#include <iostream>
+#include "core/resource_pool.hpp"
 
 class on_scope_exit
 {
@@ -44,10 +46,10 @@ start(bot_type& bot, std::size_t thread_count)
 	if (!bot.threads.size())
 		for (size_t i = 0; i < thread_count; ++i)
 			bot.threads.push_back(std::thread {[&bot]() {
-				on_scope_exit g {[]() {
-					std::cout << "[" << std::this_thread::get_id()
-							  << "] spin down\n";
-				}};
+				//on_scope_exit g {[]() {
+				//	std::cout << "[" << std::this_thread::get_id()
+				//			  << "] spin down\n";
+				//}};
 				while (true)
 				{
 					try
