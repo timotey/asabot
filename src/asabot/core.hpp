@@ -59,12 +59,12 @@ start(bot_type& bot, std::size_t thread_count)
 					}
 					catch (const boost::system::system_error& e)
 					{
-						std::cout << "[" << std::this_thread::get_id()
+						std::cerr << "[" << std::this_thread::get_id()
 								  << "] exception caught: " << e.what() << '\n';
 					}
 					catch (...)
 					{
-						std::cout << "[" << std::this_thread::get_id()
+						std::cerr << "[" << std::this_thread::get_id()
 								  << "] unknown exception\n";
 						throw;
 					}

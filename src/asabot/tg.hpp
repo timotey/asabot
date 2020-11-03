@@ -1,9 +1,6 @@
 #include <string_view>
 #include <future>
-#include <thread>
-#include <sstream>
 #include <exception>
-#include <regex>
 #include <experimental/coroutine>
 #include <boost/asio.hpp>
 #include <boost/asio/ssl.hpp>
@@ -37,19 +34,18 @@ class longpoll_bot
 	};
 
 	public:
-	std::string const			   token;
-	asio::io_context			   io_context;
-	asio::ssl::context			   ssl_context;
-	asio::ip::tcp::resolver		   resolver;
-	std::vector<std::thread>	   threads;
-	resource_repo<request_context> socks;
+	std::string const										   token;
+	asio::io_context										   io_context;
+	asio::ssl::context										   ssl_context;
+	asio::ip::tcp::resolver									   resolver;
+	std::vector<std::thread>								   threads;
+	resource_repo<request_context>							   socks;
 	asio::executor_work_guard<asio::io_context::executor_type> work;
 
 	static common_settings const&
 	get_common_settings()
 	{
-		static common_settings const s {
-			{"api.telegram.org", "https"}};
+		static common_settings const s {{"api.telegram.org", "https"}};
 		return s;
 	}
 
@@ -73,9 +69,9 @@ class longpoll_bot
 	template <class request_type>
 	static asio::awaitable<void>
 	perform_request(
-		longpoll_bot&									   bot,
-		const request_type								   request,
-		std::promise<typename request_type::response_type> result)
+		longpoll_bot&									   t_bot,
+		const request_type								   t_request,
+		std::promise<typename request_type::response_type> t_result)
 	{
 		namespace ssl		= asio::ssl;
 		using response_type = typename request_type::response_type;
@@ -83,12 +79,11 @@ class longpoll_bot
 		try
 		{
 			/* connect to the host */
-			auto sock = bot.socks.lock();
+			auto sock = t_bot.socks.lock();
 
 			/* construct the HTTP request */
-			// asio::streambuf	  request_buf;
 			std::stringstream body_stream;
-			body_stream << request;
+			body_stream << t_request;
 
 			http::request<http::string_body> request;
 			request.method(http::verb::get);
@@ -96,48 +91,23 @@ class longpoll_bot
 			{
 				using namespace std::string_literals;
 				request.target(
-					"/bot"s + bot.token + "/"s
-					+ static_cast<std::string>(request_type::name));
+					"/bot"s + t_bot.token + "/"s +
+					static_cast<std::string>(request_type::name));
 			}
 			request.set(
 				http::field::host,
 				longpoll_bot::get_common_settings().query.host_name());
 			request.set(http::field::content_type, "application/json");
 			request.body() = body_stream.str();
-			//std::cout << request.target();
 			request.prepare_payload();
 
-			// request_stream << "GET /bot" << bot.token << "/"
-			//			   << request_type::name << " HTTP/1.1\r\n";
-			// request_stream << "Host: api.telegram.org\r\n";
-			// request_stream << "Content-Type: application/json\r\n";
-			// request_stream << "Content-Length: " <<
-			// body_stream.str().length()
-			//			   << "\r\n";
-			// request_stream << "Connection: keep-alive\r\n\r\n";
-			// request_stream << body_stream.str();
-
 			/* send the HTTP request */
-			//std::cout << request.base() << "\r\n\r\n";
 			co_await http::async_write(
 				sock->sock,
 				request,
 				asio::use_awaitable);
 
 			/* recieve the HTTP request */
-			// this could be co_await asio::async_read, but it cannot
-			// accept asio::use_awaitable as a completion handler,
-			// so you need to use asio::async_read_until with
-			// condition which matches stream end
-			// using buffer_iterator = boost::asio::buffers_iterator<
-			//	boost::asio::streambuf::const_buffers_type>;
-			// auto match_end =
-			//	+[](buffer_iterator,
-			//		buffer_iterator end) -> std::pair<buffer_iterator, bool> {
-			//	return std::make_pair(end, false);
-			//};
-			// asio::streambuf response_header_buf;
-			// std::istream	response_header_stream(&response_header_buf);
 			http::response<http::string_body> http_response;
 			boost::beast::flat_buffer		  buf;
 			co_await http::async_read(
@@ -148,16 +118,15 @@ class longpoll_bot
 			/* end of recieve the HTTP request */
 
 			/* deserealization of the HTTP request */
-			// TODO: implement deserialization part
 			std::istringstream response_stream {http_response.body()};
 			response_type	   response;
 			response_stream >> response;
-			result.set_value(response);
+			t_result.set_value(response);
 			co_return;
 		}
 		catch (...)
 		{
-			result.set_exception(std::current_exception());
+			t_result.set_exception(std::current_exception());
 		}
 	}
 

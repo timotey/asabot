@@ -8,14 +8,7 @@
 
 namespace asabot::tg
 {
-
 using int_type = std::int_fast64_t;
-
-class serialize
-{
-	template <>
-	serialize()
-}
 
 struct user
 {
@@ -25,10 +18,10 @@ struct user
 	std::string last_name;
 	std::string username;
 	std::string language_code;
-	//friend std::ostream&
-	//operator<<(std::ostream&, const user&);
-	//friend std::istream&
-	//operator>>(std::istream&, user&);
+	friend std::ostream&
+	operator<<(std::ostream&, const user&);
+	friend std::istream&
+	operator>>(std::istream&, user&);
 };
 
 struct me
@@ -37,10 +30,10 @@ struct me
 	bool can_join_groups;
 	bool can_trad_all_group_messages;
 	bool supports_inline_queries;
-	//friend std::ostream&
-	//operator<<(std::ostream&, const me&);
-	//friend std::istream&
-	//operator>>(std::istream&, me&);
+	friend std::ostream&
+	operator<<(std::ostream&, const me&);
+	friend std::istream&
+	operator>>(std::istream&, me&);
 };
 
 struct photo_size
@@ -50,10 +43,10 @@ struct photo_size
 	int_type				width;
 	int_type				height;
 	std::optional<int_type> file_size;
-	//friend std::ostream&
-	//operator<<(std::ostream&, const photo_size&);
-	//friend std::istream&
-	//operator>>(std::istream&, photo_size&);
+	friend std::ostream&
+	operator<<(std::ostream&, const photo_size&);
+	friend std::istream&
+	operator>>(std::istream&, photo_size&);
 };
 
 struct chat_photo
@@ -62,10 +55,10 @@ struct chat_photo
 	std::string small_file_unique_id;
 	std::string big_file_id;
 	std::string big_file_unique_id;
-	//friend std::ostream&
-	//operator<<(std::ostream&, const chat_photo&);
-	//friend std::istream&
-	//operator>>(std::istream&, chat_photo&);
+	friend std::ostream&
+	operator<<(std::ostream&, const chat_photo&);
+	friend std::istream&
+	operator>>(std::istream&, chat_photo&);
 };
 
 struct animation
@@ -76,10 +69,10 @@ struct animation
 	std::string file_name;
 	std::string mime_type;
 	int_type	file_size;
-	//friend std::ostream&
-	//operator<<(std::ostream&, const animation&);
-	//friend std::istream&
-	//operator>>(std::istream&, animation&);
+	friend std::ostream&
+	operator<<(std::ostream&, const animation&);
+	friend std::istream&
+	operator>>(std::istream&, animation&);
 };
 
 struct audio
@@ -90,10 +83,10 @@ struct audio
 	std::string file_name;
 	std::string mime_type;
 	int_type	file_size;
-	//friend std::ostream&
-	//operator<<(std::ostream&, const audio&);
-	//friend std::istream&
-	//operator>>(std::istream&, audio&);
+	friend std::ostream&
+	operator<<(std::ostream&, const audio&);
+	friend std::istream&
+	operator>>(std::istream&, audio&);
 };
 
 struct document
@@ -104,10 +97,10 @@ struct document
 	std::string file_name;
 	std::string mime_type;
 	int_type	file_size;
-	//friend std::ostream&
-	//operator<<(std::ostream&, const document&);
-	//friend std::istream&
-	//operator>>(std::istream&, document&);
+	friend std::ostream&
+	operator<<(std::ostream&, const document&);
+	friend std::istream&
+	operator>>(std::istream&, document&);
 };
 
 struct video
@@ -118,10 +111,10 @@ struct video
 	std::string file_name;
 	std::string mime_type;
 	int_type	file_size;
-	//friend std::ostream&
-	//operator<<(std::ostream&, const video&);
-	//friend std::istream&
-	//operator>>(std::istream&, video&);
+	friend std::ostream&
+	operator<<(std::ostream&, const video&);
+	friend std::istream&
+	operator>>(std::istream&, video&);
 };
 
 struct video_note
@@ -132,10 +125,10 @@ struct video_note
 	std::string file_name;
 	std::string mime_type;
 	int_type	file_size;
-	//friend std::ostream&
-	//operator<<(std::ostream&, const video_note&);
-	//friend std::istream&
-	//operator>>(std::istream&, video_note&);
+	friend std::ostream&
+	operator<<(std::ostream&, const video_note&);
+	friend std::istream&
+	operator>>(std::istream&, video_note&);
 };
 
 struct voice
@@ -146,10 +139,10 @@ struct voice
 	std::string file_name;
 	std::string mime_type;
 	int_type	file_size;
-	//friend std::ostream&
-	//operator<<(std::ostream&, const voice&);
-	//friend std::istream&
-	//operator>>(std::istream&, voice&);
+	friend std::ostream&
+	operator<<(std::ostream&, const voice&);
+	friend std::istream&
+	operator>>(std::istream&, voice&);
 };
 
 struct contact
@@ -160,10 +153,10 @@ struct contact
 	std::string file_name;
 	std::string mime_type;
 	int_type	file_size;
-	//friend std::ostream&
-	//operator<<(std::ostream&, const contact&);
-	//friend std::istream&
-	//operator>>(std::istream&, contact&);
+	friend std::ostream&
+	operator<<(std::ostream&, const contact&);
+	friend std::istream&
+	operator>>(std::istream&, contact&);
 };
 
 struct dice
@@ -174,10 +167,10 @@ struct dice
 	std::string file_name;
 	std::string mime_type;
 	int_type	file_size;
-	//friend std::ostream&
-	//operator<<(std::ostream&, const dice&);
-	//friend std::istream&
-	//operator>>(std::istream&, dice&);
+	friend std::ostream&
+	operator<<(std::ostream&, const dice&);
+	friend std::istream&
+	operator>>(std::istream&, dice&);
 };
 
 struct poll_option
@@ -188,10 +181,10 @@ struct poll_option
 	std::string file_name;
 	std::string mime_type;
 	int_type	file_size;
-	//friend std::ostream&
-	//operator<<(std::ostream&, const poll_option&);
-	//friend std::istream&
-	//operator>>(std::istream&, poll_option&);
+	friend std::ostream&
+	operator<<(std::ostream&, const poll_option&);
+	friend std::istream&
+	operator>>(std::istream&, poll_option&);
 };
 
 struct poll_answer
@@ -202,10 +195,10 @@ struct poll_answer
 	std::string file_name;
 	std::string mime_type;
 	int_type	file_size;
-	//friend std::ostream&
-	//operator<<(std::ostream&, const poll_answer&);
-	//friend std::istream&
-	//operator>>(std::istream&, poll_answer&);
+	friend std::ostream&
+	operator<<(std::ostream&, const poll_answer&);
+	friend std::istream&
+	operator>>(std::istream&, poll_answer&);
 };
 
 struct poll
@@ -216,10 +209,10 @@ struct poll
 	std::string file_name;
 	std::string mime_type;
 	int_type	file_size;
-	//friend std::ostream&
-	//operator<<(std::ostream&, const poll&);
-	//friend std::istream&
-	//operator>>(std::istream&, poll&);
+	friend std::ostream&
+	operator<<(std::ostream&, const poll&);
+	friend std::istream&
+	operator>>(std::istream&, poll&);
 };
 
 struct location
@@ -230,10 +223,10 @@ struct location
 	std::string file_name;
 	std::string mime_type;
 	int_type	file_size;
-	//friend std::ostream&
-	//operator<<(std::ostream&, const location&);
-	//friend std::istream&
-	//operator>>(std::istream&, location&);
+	friend std::ostream&
+	operator<<(std::ostream&, const location&);
+	friend std::istream&
+	operator>>(std::istream&, location&);
 };
 
 struct venue
@@ -244,10 +237,10 @@ struct venue
 	std::string file_name;
 	std::string mime_type;
 	int_type	file_size;
-	//friend std::ostream&
-	//operator<<(std::ostream&, const venue&);
-	//friend std::istream&
-	//operator>>(std::istream&, venue&);
+	friend std::ostream&
+	operator<<(std::ostream&, const venue&);
+	friend std::istream&
+	operator>>(std::istream&, venue&);
 };
 
 struct user_profile_photos
@@ -258,10 +251,10 @@ struct user_profile_photos
 	std::string file_name;
 	std::string mime_type;
 	int_type	file_size;
-	//friend std::ostream&
-	//operator<<(std::ostream&, const user_profile_photos&);
-	//friend std::istream&
-	//operator>>(std::istream&, user_profile_photos&);
+	friend std::ostream&
+	operator<<(std::ostream&, const user_profile_photos&);
+	friend std::istream&
+	operator>>(std::istream&, user_profile_photos&);
 };
 
 struct file
@@ -272,10 +265,10 @@ struct file
 	std::string file_name;
 	std::string mime_type;
 	int_type	file_size;
-	//friend std::ostream&
-	//operator<<(std::ostream&, const file&);
-	//friend std::istream&
-	//operator>>(std::istream&, file&);
+	friend std::ostream&
+	operator<<(std::ostream&, const file&);
+	friend std::istream&
+	operator>>(std::istream&, file&);
 };
 
 struct reply_keyboard_markup
@@ -286,10 +279,10 @@ struct reply_keyboard_markup
 	std::string file_name;
 	std::string mime_type;
 	int_type	file_size;
-	//friend std::ostream&
-	//operator<<(std::ostream&, const reply_keyboard_markup&);
-	//friend std::istream&
-	//operator>>(std::istream&, reply_keyboard_markup&);
+	friend std::ostream&
+	operator<<(std::ostream&, const reply_keyboard_markup&);
+	friend std::istream&
+	operator>>(std::istream&, reply_keyboard_markup&);
 };
 
 struct chat_channel;
@@ -315,14 +308,14 @@ struct message
 	using caption_entities = text_entities;
 	using animation =
 		std::tuple<asabot::tg::animation, caption, caption_entities>;
-	using audio = std::tuple<asabot::tg::animation, caption, caption_entities>;
+	using audio = std::tuple<asabot::tg::audio, caption, caption_entities>;
 	using document =
-		std::tuple<asabot::tg::animation, caption, caption_entities>;
-	using photo = std::tuple<asabot::tg::animation, caption, caption_entities>;
+		std::tuple<asabot::tg::document, caption, caption_entities>;
+	using photo = std::tuple<asabot::tg::photo_size, caption, caption_entities>;
 	//	using sticker					= asabot::tg::sticker;
-	using video = std::tuple<asabot::tg::animation, caption, caption_entities>;
+	using video = std::tuple<asabot::tg::video, caption, caption_entities>;
 	using video_note = asabot::tg::video_note;
-	using voice = std::tuple<asabot::tg::animation, caption, caption_entities>;
+	using voice = std::tuple<asabot::tg::voice, caption, caption_entities>;
 	using contact = asabot::tg::contact;
 	//	using dice						= asabot::tg::dice;
 	//	using game						= asabot::tg::game;
@@ -331,14 +324,14 @@ struct message
 	//	using location					= asabot::tg::location;
 	using new_chat_members		  = std::vector<asabot::tg::user>;
 	using left_chat_member		  = asabot::tg::user;
-	using new_chat_title		  = std::string;
+	struct new_chat_title: std::string{};
 	using new_chat_photo		  = std::vector<asabot::tg::photo_size>;
-	using delete_chat_photo		  = std::true_type;
-	using group_chat_created	  = std::true_type;
-	using supergroup_chat_created = std::true_type;
-	using channel_chat_created	  = std::true_type;
-	using migrate_to_chat_id	  = asabot::tg::int_type;
-	using migrate_from_chat_id	  = asabot::tg::int_type;
+	struct delete_chat_photo	   : std::true_type{};
+	struct group_chat_created	   : std::true_type{};
+	struct supergroup_chat_created : std::true_type{};
+	struct channel_chat_created	   : std::true_type{};
+	//struct migrate_to_chat_id	   : asabot::tg::int_type{};
+	//struct migrate_from_chat_id	   : asabot::tg::int_type{};
 	using pinned_message		  = std::unique_ptr<asabot::tg::message>;
 	//	using invoice					= asabot::tg::invoice;
 	//	using successful_payment		= asabot::tg::successful_payment;
@@ -371,19 +364,19 @@ struct message
 		asabot::tg::message::group_chat_created,
 		asabot::tg::message::supergroup_chat_created,
 		asabot::tg::message::channel_chat_created,
-		asabot::tg::message::migrate_to_chat_id,
-		asabot::tg::message::migrate_from_chat_id,
+		//asabot::tg::message::migrate_to_chat_id,
+		//asabot::tg::message::migrate_from_chat_id,
 		asabot::tg::message::pinned_message
 		//			asabot::tg::message::invoice,
 		//			asabot::tg::message::successful_payment,
 		//			asabot::tg::message::connected_website,
 		//			asabot::tg::message::passport_data
 		>
-		message;
-	//friend std::ostream&
-	//operator<<(std::ostream&, const asabot::tg::message&);
-	//friend std::istream&
-	//operator>>(std::istream&, asabot::tg::message&);
+		msg;
+	friend std::ostream&
+	operator<<(std::ostream&, const asabot::tg::message&);
+	friend std::istream&
+	operator>>(std::istream&, asabot::tg::message&);
 };
 
 struct chat_private
@@ -394,10 +387,10 @@ struct chat_private
 	std::string						  first_name;
 	std::string						  last_name;
 	chat_photo						  photo;
-	//friend std::ostream&
-	//operator<<(std::ostream&, const chat_private&);
-	//friend std::istream&
-	//operator>>(std::istream&, chat_private&);
+	friend std::ostream&
+	operator<<(std::ostream&, const chat_private&);
+	friend std::istream&
+	operator>>(std::istream&, chat_private&);
 };
 
 struct chat_group
@@ -410,10 +403,10 @@ struct chat_group
 	std::string						  invite_link;
 	message							  pinned_message;
 	chat_permissions				  permissions;
-	//friend std::ostream&
-	//operator<<(std::ostream&, const chat_group&);
-	//friend std::istream&
-	//operator>>(std::istream&, chat_group&);
+	friend std::ostream&
+	operator<<(std::ostream&, const chat_group&);
+	friend std::istream&
+	operator>>(std::istream&, chat_group&);
 };
 
 struct chat_supergroup
@@ -430,10 +423,10 @@ struct chat_supergroup
 	std::optional<int_type>			  slow_mode_delay;
 	std::string						  sticker_set_name;
 	bool							  can_set_sticker_set;
-	//friend std::ostream&
-	//operator<<(std::ostream&, const chat_supergroup&);
-	//friend std::istream&
-	//operator>>(std::istream&, chat_supergroup&);
+	friend std::ostream&
+	operator<<(std::ostream&, const chat_supergroup&);
+	friend std::istream&
+	operator>>(std::istream&, chat_supergroup&);
 };
 
 struct chat_channel
@@ -447,10 +440,10 @@ struct chat_channel
 	std::string						  invite_link;
 	message							  pinned_message;
 	chat_permissions				  permissions;
-	//friend std::ostream&
-	//operator<<(std::ostream&, const chat_channel&);
-	//friend std::istream&
-	//operator>>(std::istream&, chat_channel&);
+	friend std::ostream&
+	operator<<(std::ostream&, const chat_channel&);
+	friend std::istream&
+	operator>>(std::istream&, chat_channel&);
 };
 
 using chat =
@@ -479,8 +472,13 @@ struct update
 	};
 
 	int_type update_id;
-	std::variant<message, edited_message, channel_post, edited_channel_post> update;
+	std::variant<message, edited_message, channel_post, edited_channel_post>
+		update;
 
+	friend std::ostream&
+	operator<<(std::ostream&, const chat_channel&);
+	friend std::istream&
+	operator>>(std::istream&, chat_channel&);
 };
 
 } // namespace asabot::tg

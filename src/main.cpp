@@ -40,11 +40,11 @@ main(int, char*[])
 		return key;
 	}("key")};
 
-	mock_request r {.payload = "{\"timeout\" : 100}"};
+	mock_request req {.payload = "{\"timeout\" : 100}"};
 
 	std::cin.ignore();
 	asabot::start(bot, 2);
-	auto ret_future = asabot::perform_request(bot, r);
+	auto ret_future = asabot::perform_request(bot, req);
 	try
 	{
 		auto r = ret_future.get();
@@ -55,11 +55,11 @@ main(int, char*[])
 		std::cout << e.code().message() << "\n" << e.what() << "\n";
 	}
 	std::this_thread::sleep_for(std::chrono::seconds(1));
-	auto ret_future2 = asabot::perform_request(bot, r);
+	auto ret_future2 = asabot::perform_request(bot, req);
 	try
 	{
-		auto r = ret_future2.get();
-		std::cout << "\r\n" << r.payload << "\n\r\n\r";
+		auto r2 = ret_future2.get();
+		std::cout << "\r\n" << r2.payload << "\n\r\n\r";
 	}
 	catch (const boost::system::system_error& e)
 	{
