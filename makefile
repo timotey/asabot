@@ -1,7 +1,10 @@
 CC=clang++
 LD=clang++
 
-WARNS=all extra
+WARNS := all extra shadow non-virtual-dtor old-style-cast cast-align
+WARNS += unused overloaded-virtual pedantic conversion sign-conversion
+WARNS += misleading-indentation null-dereference double-promotion
+WARNS += format=2
 
 CFLAGS=O0 g3 Wall stdlib=libc++ std=c++2a fcoroutines-ts DBOOST_ASIO_DISABLE_CONCEPTS
 LFLAGS= stdlib=libc++
