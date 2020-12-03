@@ -5,7 +5,7 @@ AlignConsecutiveMacros: 'true'
 AlignConsecutiveAssignments: 'true'
 AlignConsecutiveDeclarations: 'true'
 AlignEscapedNewlines: Right
-AlignOperands: 'true'
+AlignOperands: 'false'
 AlignTrailingComments: 'true'
 AllowAllArgumentsOnNextLine: 'false'
 AllowAllConstructorInitializersOnNextLine: 'false'
@@ -14,7 +14,7 @@ AllowShortBlocksOnASingleLine: 'false'
 AllowShortCaseLabelsOnASingleLine: 'false'
 AllowShortFunctionsOnASingleLine: None
 AllowShortIfStatementsOnASingleLine: Never
-AllowShortLambdasOnASingleLine: Inline
+AllowShortLambdasOnASingleLine: None
 AllowShortLoopsOnASingleLine: 'false'
 AlwaysBreakAfterDefinitionReturnType: All
 AlwaysBreakAfterReturnType: All
@@ -24,10 +24,10 @@ BinPackArguments: 'false'
 BinPackParameters: 'false'
 BreakBeforeBinaryOperators: None
 BreakBeforeBraces: Allman
-BreakBeforeTernaryOperators: 'true'
+BreakBeforeTernaryOperators: 'false'
 BreakConstructorInitializers: AfterColon
 BreakInheritanceList: AfterColon
-BreakStringLiterals: 'false'
+BreakStringLiterals: 'true'
 ColumnLimit: '80'
 CompactNamespaces: 'false'
 ConstructorInitializerAllOnOneLineOrOnePerLine: 'false'
@@ -35,7 +35,7 @@ ContinuationIndentWidth: '4'
 Cpp11BracedListStyle: 'true'
 DerivePointerAlignment: 'false'
 DisableFormat: 'false'
-ExperimentalAutoDetectBinPacking: 'false'
+ExperimentalAutoDetectBinPacking: 'true'
 FixNamespaceComments: 'true'
 IncludeBlocks: Merge
 IndentCaseLabels: 'true'
@@ -43,12 +43,14 @@ IndentPPDirectives: BeforeHash
 IndentWidth: '4'
 IndentWrappedFunctionNames: 'false'
 KeepEmptyLinesAtTheStartOfBlocks: 'false'
-PointerAlignment: Left
+Language: Cpp
+PointerAlignment: Middle
 ReflowComments: 'true'
 SortIncludes: 'false'
 SortUsingDeclarations: 'true'
 SpaceAfterCStyleCast: 'false'
 SpaceAfterLogicalNot: 'false'
+SpaceAfterTemplateKeyword: 'false'
 SpaceBeforeAssignmentOperators: 'true'
 SpaceBeforeCpp11BracedList: 'true'
 SpaceBeforeCtorInitializerColon: 'false'
@@ -61,6 +63,6 @@ SpacesInParentheses: 'false'
 SpacesInSquareBrackets: 'false'
 Standard: Cpp11
 TabWidth: '4'
-UseTab: Always
+UseTab: ForIndentation
 
 ...

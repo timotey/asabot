@@ -14,28 +14,28 @@ struct mock_request
 	struct response_type
 	{
 		std::string payload;
-		friend std::istream&
-		operator>>(std::istream& s, response_type& t)
+		friend std::istream &
+		operator>>(std::istream & s, response_type & t)
 		{
 			t.payload = std::string {std::istreambuf_iterator<char>(s), {}};
 			return s;
 		}
 	};
 	static constexpr std::string_view name = "getUpdates";
-	std::string						  payload;
-	friend std::ostream&
-	operator<<(std::ostream& s, const mock_request& t)
+	std::string                       payload;
+	friend std::ostream &
+	operator<<(std::ostream & s, const mock_request & t)
 	{
 		return s << t.payload;
 	}
 };
 
 int
-main(int, char*[])
+main(int, char *[])
 {
 	asabot::tg::longpoll_bot bot {[](std::string_view file) {
 		std::ifstream keyfile {file};
-		std::string	  key;
+		std::string   key;
 		keyfile >> key;
 		return key;
 	}("key")};
@@ -50,7 +50,7 @@ main(int, char*[])
 		auto r = ret_future.get();
 		std::cout << "\r\n" << r.payload << "\n\r\n\r";
 	}
-	catch (const boost::system::system_error& e)
+	catch (const boost::system::system_error & e)
 	{
 		std::cout << e.code().message() << "\n" << e.what() << "\n";
 	}
@@ -61,7 +61,7 @@ main(int, char*[])
 		auto r2 = ret_future2.get();
 		std::cout << "\r\n" << r2.payload << "\n\r\n\r";
 	}
-	catch (const boost::system::system_error& e)
+	catch (const boost::system::system_error & e)
 	{
 		std::cout << e.code().message() << "\n" << e.what() << "\n";
 	}

@@ -3,15 +3,14 @@
 namespace asabot::tg
 
 {
-
 struct get_updates
 {
-	using response_type = asabot::tg::array<asabot::tg::update>;
+	using result_type                      = std::vector<asabot::tg::update>;
 	constexpr static std::string_view name = "getUpdates";
-	std::optional<int_type> offset;
-	int_type limit = 100;
-	int_type timeout = 0;
-	std::vector<std::string_view> allowed_updates;
+	int_type              offset;
+	int_type              limit;
+	duration_type timeout = duration_type::zero();
+	std::vector<std::string>  allowed_updates;
 };
 
-}
+} // namespace asabot::tg
