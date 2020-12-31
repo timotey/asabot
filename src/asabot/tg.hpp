@@ -35,12 +35,12 @@ class longpoll_bot
 	};
 
 	public:
-	std::string const                                          token;
-	asio::io_context                                           io_context;
-	asio::ssl::context                                         ssl_context;
-	asio::ip::tcp::resolver                                    resolver;
-	std::vector<std::thread>                                   threads;
-	resource_repo<request_context>                             socks;
+	std::string const              token;
+	asio::io_context               io_context;
+	asio::ssl::context             ssl_context;
+	asio::ip::tcp::resolver        resolver;
+	std::vector<std::thread>       threads;
+	resource_repo<request_context> socks;
 	asio::executor_work_guard<asio::io_context::executor_type> work;
 
 	static common_settings const &
@@ -134,34 +134,43 @@ class longpoll_bot
 	public:
 	///
 	///@brief the constructor
-	///@param[in]	token	telegram bot token used for api authentication
+	///@param[in]	token	telegram bot token used for api
+	///authentication
 	///
 	explicit longpoll_bot(std::string_view _token):
-	    token(_token), io_context(), ssl_context(asio::ssl::context::tls),
-	    resolver(this->io_context), // query("api.telegram.org", "https")
+	    token(_token), io_context(),
+	    ssl_context(asio::ssl::context::tls),
+	    resolver(
+	        this->io_context), // query("api.telegram.org", "https")
 
-	    /* initializing our request context container with a factory function
-	       which will produce ready to use sockets */
+	    /* initializing our request context container with a factory
+	       function which will produce ready to use sockets */
 	    // TODO: make this function asynchronyous
-	    socks([this]() -> request_context {
-		    using ssl_socket = asio::ssl::stream<asio::ip::tcp::socket>;
-		    longpoll_bot::request_context sock {
-		        {this->io_context, this->ssl_context}};
+	    socks(
+	        [this]() -> request_context
+	        {
+		        using ssl_socket =
+		            asio::ssl::stream<asio::ip::tcp::socket>;
+		        longpoll_bot::request_context sock {
+		            {this->io_context, this->ssl_context}};
 
-		    /* attempting to connect to the server */
-		    asio::connect(
-		        sock.sock.lowest_layer(),
-		        this->resolver.resolve(
-		            longpoll_bot::get_common_settings().query));
+		        /* attempting to connect to the server */
+		        asio::connect(
+		            sock.sock.lowest_layer(),
+		            this->resolver.resolve(
+		                longpoll_bot::get_common_settings().query));
 
-		    /* perform tls handshake */
-		    sock.sock.lowest_layer().set_option(asio::ip::tcp::no_delay(true));
-		    sock.sock.set_verify_mode(asio::ssl::verify_peer);
-		    sock.sock.set_verify_callback(asio::ssl::host_name_verification(
-		        longpoll_bot::get_common_settings().query.host_name()));
-		    sock.sock.handshake(ssl_socket::client);
-		    return sock;
-	    }),
+		        /* perform tls handshake */
+		        sock.sock.lowest_layer().set_option(
+		            asio::ip::tcp::no_delay(true));
+		        sock.sock.set_verify_mode(asio::ssl::verify_peer);
+		        sock.sock.set_verify_callback(
+		            asio::ssl::host_name_verification(
+		                longpoll_bot::get_common_settings()
+		                    .query.host_name()));
+		        sock.sock.handshake(ssl_socket::client);
+		        return sock;
+	        }),
 
 	    work(this->io_context.get_executor())
 	{

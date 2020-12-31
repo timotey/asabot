@@ -5,6 +5,7 @@
 #include <optional>
 #include <memory>
 #include <iostream>
+#include <chrono>
 
 namespace asabot::tg
 {
@@ -13,11 +14,14 @@ using id_type       = std::int_fast64_t;
 using size_type     = std::int_fast64_t;
 using duration_type = std::chrono::duration<std::chrono::system_clock>;
 using time_type     = std::chrono::time_point<std::chrono::system_clock>;
+class tag{};
 
 struct message;
 
 struct user
 {
+	using tag = tag;
+
 	id_type     id;
 	bool        is_bot;
 	std::string first_name;
@@ -32,6 +36,8 @@ struct user
 
 struct me
 {
+	using tag = tag;
+
 	user user;
 	bool can_join_groups;
 	bool can_trad_all_group_messages;
@@ -44,6 +50,8 @@ struct me
 
 struct message_entity
 {
+	using tag = tag;
+
 	std::string           type;
 	int_type              offset;
 	int_type              length;
@@ -54,6 +62,8 @@ struct message_entity
 
 struct photo_size
 {
+	using tag = tag;
+
 	std::string              file_id;
 	std::string              file_unique_id;
 	size_type                width;
@@ -67,6 +77,8 @@ struct photo_size
 
 struct chat_photo
 {
+	using tag = tag;
+
 	std::string small_file_id;
 	std::string small_file_unique_id;
 	std::string big_file_id;
@@ -79,6 +91,8 @@ struct chat_photo
 
 struct labeled_price
 {
+	using tag = tag;
+
 	std::string label;
 	int_type    amount;
 	friend std::ostream &
@@ -89,6 +103,8 @@ struct labeled_price
 
 struct invoice
 {
+	using tag = tag;
+
 	std::string title;
 	std::string description;
 	std::string start_parameter;
@@ -102,6 +118,8 @@ struct invoice
 
 struct shipping_address
 {
+	using tag = tag;
+
 	std::string country_code;
 	std::string state;
 	std::string city;
@@ -116,6 +134,8 @@ struct shipping_address
 
 struct order_info
 {
+	using tag = tag;
+
 	std::string                       name;
 	std::string                       phone_number;
 	std::string                       email;
@@ -128,6 +148,8 @@ struct order_info
 
 struct shipping_option
 {
+	using tag = tag;
+
 	std::string                id;
 	std::string                title;
 	std::vector<labeled_price> prices;
@@ -139,6 +161,8 @@ struct shipping_option
 
 struct successful_payment
 {
+	using tag = tag;
+
 	std::string                 currency;
 	int_type                    total_amount;
 	std::string                 invoice_payload;
@@ -154,6 +178,8 @@ struct successful_payment
 
 struct shipping_query
 {
+	using tag = tag;
+
 	std::string                       id;
 	std::unique_ptr<user>             from;
 	std::string                       invoice_payload;
@@ -166,6 +192,8 @@ struct shipping_query
 
 struct pre_checkout_query
 {
+	using tag = tag;
+
 	std::string                 id;
 	std::unique_ptr<user>       from;
 	std::string                 currency;
@@ -181,6 +209,8 @@ struct pre_checkout_query
 
 struct mask_position
 {
+	using tag = tag;
+
 	std::string point;
 	float       x_shift;
 	float       y_shift;
@@ -193,6 +223,8 @@ struct mask_position
 
 struct sticker
 {
+	using tag = tag;
+
 	std::string                  file_id;
 	std::string                  file_unique_id;
 	size_type                    width;
@@ -211,6 +243,8 @@ struct sticker
 
 struct sticker_set
 {
+	using tag = tag;
+
 	std::string               name;
 	std::string               title;
 	bool                      is_animated;
@@ -228,6 +262,8 @@ struct animation;
 
 struct game
 {
+	using tag = tag;
+
 	std::string                 title;
 	std::string                 description;
 	std::vector<photo_size>     photo;
@@ -238,10 +274,14 @@ struct game
 
 struct callback_game
 {
+	using tag = tag;
+
 };
 
 struct animation
 {
+	using tag = tag;
+
 	std::string               file_id;
 	std::string               file_unique_id;
 	size_type                 width;
@@ -259,6 +299,8 @@ struct animation
 
 struct audio
 {
+	using tag = tag;
+
 	std::string               file_id;
 	std::string               file_unique_id;
 	duration_type             duration;
@@ -276,6 +318,8 @@ struct audio
 
 struct document
 {
+	using tag = tag;
+
 	std::string               file_id;
 	std::string               file_unique_id;
 	std::optional<photo_size> thumb;
@@ -290,6 +334,8 @@ struct document
 
 struct video
 {
+	using tag = tag;
+
 	std::string               file_id;
 	std::string               file_unique_id;
 	size_type                 width;
@@ -307,6 +353,8 @@ struct video
 
 struct video_note
 {
+	using tag = tag;
+
 	std::string               file_id;
 	std::string               file_unique_id;
 	size_type                 length;
@@ -321,6 +369,8 @@ struct video_note
 
 struct voice
 {
+	using tag = tag;
+
 	std::string              file_id;
 	std::string              file_unique_id;
 	duration_type            duration;
@@ -333,6 +383,8 @@ struct voice
 
 struct contact
 {
+	using tag = tag;
+
 	std::string            phone_number;
 	std::string            first_name;
 	std::string            last_name;
@@ -346,6 +398,8 @@ struct contact
 
 struct dice
 {
+	using tag = tag;
+
 	std::string file_id;
 	int_type    value;
 	friend std::ostream &
@@ -356,6 +410,8 @@ struct dice
 
 struct poll_option
 {
+	using tag = tag;
+
 	std::string text;
 	int_type    voter_count;
 	friend std::ostream &
@@ -366,6 +422,8 @@ struct poll_option
 
 struct poll_answer
 {
+	using tag = tag;
+
 	std::string           poll_id;
 	std::unique_ptr<user> user;
 	std::vector<int_type> option_ids;
@@ -377,6 +435,8 @@ struct poll_answer
 
 struct poll
 {
+	using tag = tag;
+
 	std::string                  id;
 	std::string                  question;
 	std::vector<poll_option>     options;
@@ -398,6 +458,8 @@ struct poll
 
 struct location
 {
+	using tag = tag;
+
 	float                        longtitude;
 	float                        latitude;
 	std::optional<float>         horizontal_accuracy;
@@ -412,6 +474,8 @@ struct location
 
 struct venue
 {
+	using tag = tag;
+
 	location    location;
 	std::string title;
 	std::string address;
@@ -427,6 +491,8 @@ struct venue
 
 struct proximity_alert_triggered
 {
+	using tag = tag;
+
 	std::unique_ptr<user> traveler;
 	std::unique_ptr<user> watcher;
 	int_type              distance;
@@ -434,6 +500,8 @@ struct proximity_alert_triggered
 
 struct user_profile_photos
 {
+	using tag = tag;
+
 	int_type                total_count;
 	std::vector<photo_size> photos;
 	friend std::ostream &
@@ -444,6 +512,8 @@ struct user_profile_photos
 
 struct file
 {
+	using tag = tag;
+
 	std::string file_id;
 	std::string file_unique_id;
 	size_type   file_size;
@@ -458,6 +528,8 @@ using keyboard_button_poll_type = std::string;
 
 struct keyboard_button
 {
+	using tag = tag;
+
 	std::string                              text;
 	bool                                     request_contact;
 	bool                                     request_location;
@@ -470,6 +542,8 @@ struct keyboard_button
 
 struct reply_keyboard_markup
 {
+	using tag = tag;
+
 	std::vector<std::vector<keyboard_button>> keyboard;
 	bool                                      resize_keyboard;
 	bool                                      one_time_keyboard;
@@ -482,6 +556,8 @@ struct reply_keyboard_markup
 
 struct reply_keyboard_remove
 {
+	using tag = tag;
+
 	bool selective;
 	friend std::ostream &
 	operator<<(std::ostream &, const reply_keyboard_remove &);
@@ -491,6 +567,8 @@ struct reply_keyboard_remove
 
 struct login_url
 {
+	using tag = tag;
+
 	std::string url;
 	std::string forward_text;
 	std::string bot_username;
@@ -503,6 +581,8 @@ struct login_url
 
 struct callback_query
 {
+	using tag = tag;
+
 	std::string              id;
 	std::unique_ptr<user>    from;
 	std::unique_ptr<message> message;
@@ -514,6 +594,8 @@ struct callback_query
 
 struct inline_keyboard_button
 {
+	using tag = tag;
+
 	std::string                  text;
 	std::string                  url;
 	std::optional<login_url>     login_url;
@@ -530,6 +612,8 @@ struct inline_keyboard_button
 
 struct inline_keyboard_markup
 {
+	using tag = tag;
+
 	std::vector<inline_keyboard_button> inline_keyboard;
 	friend std::ostream &
 	operator<<(std::ostream &, const inline_keyboard_markup &);
@@ -539,6 +623,8 @@ struct inline_keyboard_markup
 
 struct force_reply
 {
+	using tag = tag;
+
 	bool selective;
 	friend std::ostream &
 	operator<<(std::ostream &, const force_reply &);
@@ -548,6 +634,8 @@ struct force_reply
 
 struct chat_member
 {
+	using tag = tag;
+
 	std::unique_ptr<user>    user;
 	std::string              status;
 	std::string              custom_title;
@@ -576,6 +664,8 @@ struct chat_member
 
 struct chat_permissions
 {
+	using tag = tag;
+
 	std::optional<bool> can_send_messages;
 	std::optional<bool> can_send_media_messages;
 	std::optional<bool> can_send_polls;
@@ -592,6 +682,8 @@ struct chat_permissions
 
 struct chat_location
 {
+	using tag = tag;
+
 	std::unique_ptr<location> location;
 	std::string               address;
 	friend std::ostream &
@@ -602,6 +694,8 @@ struct chat_location
 
 struct bot_command
 {
+	using tag = tag;
+
 	std::string command;
 	std::string description;
 	friend std::ostream &
@@ -612,6 +706,8 @@ struct bot_command
 
 struct response_parameters
 {
+	using tag = tag;
+
 	std::optional<id_type>       migrate_to_chat_id;
 	std::optional<duration_type> retry_after;
 	friend std::ostream &
@@ -622,6 +718,8 @@ struct response_parameters
 
 struct inline_query
 {
+	using tag = tag;
+
 	std::string               id;
 	std::unique_ptr<user>     user;
 	std::unique_ptr<location> location;
@@ -637,6 +735,8 @@ struct chat;
 
 struct message
 {
+	using tag = tag;
+
 	id_type                              message_id;
 	std::unique_ptr<asabot::tg::user>    from;
 	std::unique_ptr<asabot::tg::chat>    sender_chat;
@@ -698,6 +798,8 @@ struct message
 
 struct chat
 {
+	using tag = tag;
+
 	id_type                      id;
 	std::string                  type;
 	std::string                  title;
@@ -718,6 +820,8 @@ struct chat
 
 struct update
 {
+	using tag = tag;
+
 	id_type                                       update_id;
 	std::optional<asabot::tg::message>            message;
 	std::optional<asabot::tg::message>            edited_message;

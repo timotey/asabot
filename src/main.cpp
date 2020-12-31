@@ -1,4 +1,5 @@
 #include <iostream>
+
 #include <fstream>
 #include <string_view>
 #include "asabot/tg.hpp"
@@ -17,7 +18,8 @@ struct mock_request
 		friend std::istream &
 		operator>>(std::istream & s, response_type & t)
 		{
-			t.payload = std::string {std::istreambuf_iterator<char>(s), {}};
+			t.payload =
+			    std::string {std::istreambuf_iterator<char>(s), {}};
 			return s;
 		}
 	};
@@ -33,12 +35,13 @@ struct mock_request
 int
 main(int, char *[])
 {
-	asabot::tg::longpoll_bot bot {[](std::string_view file) {
-		std::ifstream keyfile {file};
-		std::string   key;
-		keyfile >> key;
-		return key;
-	}("key")};
+	asabot::tg::longpoll_bot bot {[](std::string_view file)
+	                              {
+		                              std::ifstream keyfile {file};
+		                              std::string   key;
+		                              keyfile >> key;
+		                              return key;
+	                              }("key")};
 
 	mock_request req {.payload = "{\"timeout\" : 100}"};
 

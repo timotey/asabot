@@ -29,7 +29,10 @@ perform_request(bot_type & bot, request_type request)
 	auto return_future = coro_promise.get_future();
 	asio::co_spawn(
 	    bot.io_context,
-	    [&bot, &request, coro_promise = std::move(coro_promise)]() mutable {
+	    [&bot,
+	     &request,
+	     coro_promise = std::move(coro_promise)]() mutable
+	    {
 		    return bot_type::perform_request(
 		        bot,
 		        request,
@@ -45,31 +48,32 @@ start(bot_type & bot, std::size_t thread_count)
 {
 	if (!bot.threads.size())
 		for (size_t i = 0; i < thread_count; ++i)
-			bot.threads.push_back(std::thread {[&bot]() {
-				// on_scope_exit g {[]() {
-				//	std::cout << "[" << std::this_thread::get_id()
-				//			  << "] spin down\n";
-				//}};
-				while (true)
-				{
-					try
-					{
-						bot.io_context.run();
-						break;
-					}
-					catch (const boost::system::system_error & e)
-					{
-						std::cerr << "[" << std::this_thread::get_id()
-						          << "] exception caught: " << e.what() << '\n';
-					}
-					catch (...)
-					{
-						std::cerr << "[" << std::this_thread::get_id()
-						          << "] unknown exception\n";
-						throw;
-					}
-				}
-			}});
+			bot.threads.push_back(std::thread {
+			    [&bot]()
+			    {
+				    while (true)
+				    {
+					    try
+					    {
+						    bot.io_context.run();
+						    break;
+					    }
+					    catch (const boost::system::system_error & e)
+					    {
+						    std::cerr
+						        << "[" << std::this_thread::get_id()
+						        << "] exception caught: " << e.what()
+						        << '\n';
+					    }
+					    catch (...)
+					    {
+						    std::cerr << "["
+						              << std::this_thread::get_id()
+						              << "] unknown exception\n";
+						    throw;
+					    }
+				    }
+			    }});
 }
 
 template<class bot_type>
